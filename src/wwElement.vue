@@ -60,18 +60,6 @@ export default {
                         },
                     ];
                     if (!data.length || !Array.isArray(_.get(data[0], dataXField))) {
-                        console.log(
-                            'HERE',
-                            data.map(item => ({
-                                x: _.get(item, dataXField),
-                                y: this.aggregate(
-                                    aggregate,
-                                    data
-                                        .filter(elem => _.get(elem, dataXField) === _.get(item, dataXField))
-                                        .map(elem => _.get(elem, dataYField))
-                                ),
-                            }))
-                        );
                         datasets[0].data = data.map(item => ({
                             x: _.get(item, dataXField),
                             y: this.aggregate(
@@ -220,14 +208,17 @@ export default {
                                         .map(({ x, y }) => [x, y]);
                                     const my_regression = regression.linear(clean_data);
                                     const useful_points = my_regression.points.map(([x, y]) => ({ x, y }));
+                                    if (!useful_points.length) return {}
+                                    const firstItem = useful_points.shift()
+                                    const lastItem = useful_points.pop()
                                     return {
                                         display: this.content.showLinearRegression,
                                         borderColor: dataset.borderColor,
                                         type: 'line',
-                                        yMin: useful_points.shift().y,
-                                        yMax: useful_points.pop().y,
-                                        xMin: useful_points.shift().x,
-                                        xMax: useful_points.pop().x,
+                                        yMin: firstItem.y,
+                                        yMax: lastItem.y,
+                                        xMin: firstItem.x,
+                                        xMax: lastItem.x,
                                     };
                                 })
                             ),
