@@ -11,6 +11,24 @@ export default {
     editor: {
         label: 'Chart - Scatter',
         icon: 'fontawesome/solid/chart-scartter',
+        customStylePropertiesOrder: [
+            ['isLegend', 'legendPosition', 'legendAlignement', 'legendSize', 'legendColor'],
+            ['axis', 'stacked', 'startAtZero', 'gridColor'],
+        ],
+        customSettingsPropertiesOrder: [
+            'dataType',
+            ['labels', 'datasets'],
+            'data',
+            'dataError',
+            [
+                'xAxisTitle',
+                'dataXField',
+                'dataXFieldProperty',
+                'dataXEmpty',
+            ],
+            ['yAxis', 'dataYField', 'dataYFieldProperty', 'aggregate', 'groupBy', 'groupByProperty'],
+            ['colors'],
+        ],
     },
     properties: {
         isLegend: {
@@ -341,6 +359,7 @@ export default {
             type: 'Array',
             section: 'settings',
             options: {
+                expandable: true,
                 item: {
                     type: 'Color',
                 },
