@@ -13,7 +13,7 @@ export default {
         icon: 'fontawesome/solid/chart-scartter',
         customStylePropertiesOrder: [
             ['isLegend', 'legendPosition', 'legendAlignement', 'legendSize', 'legendColor'],
-            ['axis', 'stacked', 'startAtZero', 'gridColor'],
+            ['axis', 'stacked', 'startAtZero', 'showLinearRegression', 'gridColor'],
         ],
         customSettingsPropertiesOrder: [
             'dataType',
