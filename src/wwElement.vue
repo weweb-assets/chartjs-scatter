@@ -205,6 +205,7 @@ export default {
                                                 Math.abs(x) !== Infinity &&
                                                 Math.abs(y) !== Infinity
                                         )
+                                        .sort((a, b)=> a.x-b.x)
                                         .map(({ x, y }) => [x, y]);
                                     const my_regression = regression.linear(clean_data);
                                     const useful_points = my_regression.points.map(([x, y]) => ({ x, y }));
