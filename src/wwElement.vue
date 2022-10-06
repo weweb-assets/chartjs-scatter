@@ -182,89 +182,96 @@ export default {
                 datasets = this.content.datasets || [];
             }
 
+            const guidedOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    annotation: {
+                        annotations: Object.assign(
+                            {},
+                            datasets.map(dataset => {
+                                const clean_data = dataset.data
+                                    .filter(
+                                        ({ x, y }) =>
+                                            typeof x === typeof y && // filter out one string & one number
+                                            !isNaN(x) && // filter out `NaN`
+                                            !isNaN(y) &&
+                                            Math.abs(x) !== Infinity &&
+                                            Math.abs(y) !== Infinity
+                                    )
+                                    .sort((a, b) => a.x - b.x)
+                                    .map(({ x, y }) => [x, y]);
+                                const my_regression = regression.linear(clean_data);
+                                const useful_points = my_regression.points.map(([x, y]) => ({ x, y }));
+                                if (!useful_points.length) return {};
+                                const firstItem = useful_points.shift();
+                                const lastItem = useful_points.pop();
+                                return {
+                                    display: this.content.showLinearRegression,
+                                    borderColor: dataset.borderColor,
+                                    type: 'line',
+                                    yMin: firstItem.y,
+                                    yMax: lastItem.y,
+                                    xMin: firstItem.x,
+                                    xMax: lastItem.x,
+                                };
+                            })
+                        ),
+                    },
+                    legend: {
+                        display: this.content.isLegend,
+                        position: this.content.legendPosition,
+                        align: this.content.legendAlignement,
+                        labels: {
+                            usePointStyle: true,
+                            color: this.content.legendColor,
+                            font: { size: parseInt(this.content.legendSize) },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
+                        ticks: {
+                            color: this.content.legendColor,
+                            font: { size: parseInt(this.content.legendSize) },
+                        },
+                        beginAtZero: this.content.startAtZero,
+                    },
+                    y: {
+                        grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
+                        ticks: {
+                            color: this.content.legendColor,
+                            font: { size: parseInt(this.content.legendSize) },
+                        },
+                        beginAtZero: this.content.startAtZero,
+                    },
+                },
+            };
+
+            const advancedOptions = typeof this.content.options === 'object' ? this.content.options : guidedOptions;
+
             return {
                 type: 'scatter',
                 data: {
                     labels,
                     datasets,
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        annotation: {
-                            annotations: Object.assign(
-                                {},
-                                datasets.map(dataset => {
-                                    const clean_data = dataset.data
-                                        .filter(
-                                            ({ x, y }) =>
-                                                typeof x === typeof y && // filter out one string & one number
-                                                !isNaN(x) && // filter out `NaN`
-                                                !isNaN(y) &&
-                                                Math.abs(x) !== Infinity &&
-                                                Math.abs(y) !== Infinity
-                                        )
-                                        .sort((a, b)=> a.x-b.x)
-                                        .map(({ x, y }) => [x, y]);
-                                    const my_regression = regression.linear(clean_data);
-                                    const useful_points = my_regression.points.map(([x, y]) => ({ x, y }));
-                                    if (!useful_points.length) return {}
-                                    const firstItem = useful_points.shift()
-                                    const lastItem = useful_points.pop()
-                                    return {
-                                        display: this.content.showLinearRegression,
-                                        borderColor: dataset.borderColor,
-                                        type: 'line',
-                                        yMin: firstItem.y,
-                                        yMax: lastItem.y,
-                                        xMin: firstItem.x,
-                                        xMax: lastItem.x,
-                                    };
-                                })
-                            ),
-                        },
-                        legend: {
-                            display: this.content.isLegend,
-                            position: this.content.legendPosition,
-                            align: this.content.legendAlignement,
-                            labels: {
-                                usePointStyle: true,
-                                color: this.content.legendColor,
-                                font: { size: parseInt(this.content.legendSize) },
-                            },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
-                            ticks: {
-                                color: this.content.legendColor,
-                                font: { size: parseInt(this.content.legendSize) },
-                            },
-                            beginAtZero: this.content.startAtZero,
-                        },
-                        y: {
-                            grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
-                            ticks: {
-                                color: this.content.legendColor,
-                                font: { size: parseInt(this.content.legendSize) },
-                            },
-                            beginAtZero: this.content.startAtZero,
-                        },
-                    },
-                },
+                options: this.content.dataType === 'advanced' ? advancedOptions : guidedOptions,
             };
         },
     },
     watch: {
-        'config.data.datasets'() {
-            this.chartInstance.data.datasets = this.config.data.datasets;
-            if (this.chartInstance) this.chartInstance.destroy();
-            this.initChart();
-            this.chartInstance.update();
+        'config.data.datasets': {
+            deep: true,
+            handler() {
+                this.chartInstance.data.datasets = this.config.data.datasets;
+                if (this.chartInstance) this.chartInstance.destroy();
+                this.initChart();
+                this.chartInstance.update();
+            },
         },
         'config.data.labels'() {
             this.chartInstance.data.labels = this.config.data.labels;
@@ -290,8 +297,6 @@ export default {
         },
         'content.legendSize'() {
             this.chartInstance.options.plugins.legend.labels.font.size = parseInt(this.content.legendSize);
-            this.chartInstance.options.scales.x.ticks.font.size = parseInt(this.content.legendSize);
-            this.chartInstance.options.scales.y.ticks.font.size = parseInt(this.content.legendSize);
             this.chartInstance.update();
         },
         'content.gridColor'() {
@@ -347,6 +352,7 @@ export default {
         this.chartInstance.destroy();
     },
     methods: {
+        getOptions(datasets) {},
         initChart() {
             const element = this.$refs.chartjsScatter;
             this.chartInstance = new Chart(element, this.config);
