@@ -352,7 +352,6 @@ export default {
         this.chartInstance.destroy();
     },
     methods: {
-        getOptions(datasets) {},
         initChart() {
             const element = this.$refs.chartjsScatter;
             this.chartInstance = new Chart(element, this.config);
