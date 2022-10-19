@@ -21,15 +21,10 @@ export default {
         ],
         customSettingsPropertiesOrder: [
             'dataType',
-            ['labels', 'datasets'],
+            ['labels', 'datasets', 'options'],
             'data',
             'dataError',
-            [
-                'xAxisTitle',
-                'dataXField',
-                'dataXFieldProperty',
-                'dataXEmpty',
-            ],
+            ['xAxisTitle', 'dataXField', 'dataXFieldProperty', 'dataXEmpty'],
             ['yAxis', 'dataYField', 'dataYFieldProperty', 'aggregate', 'groupBy', 'groupByProperty'],
             ['colors'],
         ],
@@ -196,6 +191,32 @@ export default {
                 tooltip: propertiesTooltips['datasets'],
             },
             /* wwEditor:end */
+        },
+        options: {
+            label: 'Options',
+            type: 'Info',
+            options: {
+                text: 'Chart options',
+            },
+            responsive: true,
+            section: 'settings',
+            bindable: 'list',
+            defaultValue: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'left',
+                        align: 'start',
+                        labels: {
+                            usePointStyle: true,
+                            color: 'black',
+                            font: { size: 12 },
+                        },
+                    },
+                },
+                responsive: true,
+            },
+            hidden: content => content.dataType !== 'advanced',
         },
         data: {
             label: 'Data',
