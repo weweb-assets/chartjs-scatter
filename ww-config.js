@@ -14,7 +14,7 @@ function isDataArrayObject(data) {
 export default {
     editor: {
         label: 'Chart - Scatter',
-        icon: 'fontawesome/solid/chart-scatter',
+        icon: 'logos/chartjs',
         customStylePropertiesOrder: [
             ['isLegend', 'legendPosition', 'legendAlignement', 'legendSize', 'legendColor'],
             ['axis', 'stacked', 'startAtZero', 'showLinearRegression', 'gridColor'],
