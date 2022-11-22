@@ -36,6 +36,7 @@ export default {
             bindable: true,
             responsive: true,
             defaultValue: true,
+            hidden: content => content.dataType === 'advanced',
              /* wwEditor:start */
              bindingValidation: {
                 type: 'boolean',
@@ -57,7 +58,7 @@ export default {
             bindable: true,
             responsive: true,
             defaultValue: 'top',
-            hidden: content => !content.isLegend,
+            hidden: content => content.dataType === 'advanced' || !content.isLegend,
              /* wwEditor:start */
              bindingValidation: {
                 type: 'string',
@@ -78,7 +79,7 @@ export default {
             bindable: true,
             responsive: true,
             defaultValue: 'center',
-            hidden: content => !content.isLegend,
+            hidden: content => content.dataType === 'advanced' || !content.isLegend,
              /* wwEditor:start */
              bindingValidation: {
                 type: 'string',
@@ -93,13 +94,13 @@ export default {
                 unitChoices: [{ value: 'px', label: 'px', min: 0, max: 50 }],
             },
             defaultValue: '12px',
-            hidden: content => !content.isLegend,
+            hidden: content => content.dataType === 'advanced' || !content.isLegend,
         },
         legendColor: {
             label: 'Color',
             type: 'Color',
             options: { nullable: true },
-            hidden: content => !content.isLegend,
+            hidden: content => content.dataType === 'advanced' || !content.isLegend,
         },
         gridColor: {
             label: 'Grid color',
