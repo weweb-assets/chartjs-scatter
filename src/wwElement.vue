@@ -7,6 +7,7 @@
 <script>
 import { Chart, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import { getRelativePosition } from 'chart.js/helpers';
 import regression from 'regression';
 Chart.register(...registerables);
 Chart.register(annotationPlugin);
@@ -259,7 +260,20 @@ export default {
                     labels,
                     datasets,
                 },
-                options: this.content.dataType === 'advanced' ? advancedOptions : guidedOptions,
+                options: {
+                    ...(this.content.dataType === 'advanced' ? advancedOptions : guidedOptions),
+                    onClick: e => {
+                        const position = getRelativePosition(e, this.chartInstance);
+
+                        // Substitute the appropriate scale IDs
+                        const dataX = this.chartInstance.scales.x.getValueForPixel(position.x);
+                        const dataY = this.chartInstance.scales.y.getValueForPixel(position.y);
+                        this.$emit('trigger-event', {
+                            name: 'chart:click',
+                            event: { dataX, dataY, position },
+                        });
+                    },
+                },
             };
         },
     },
