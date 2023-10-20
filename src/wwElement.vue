@@ -264,13 +264,28 @@ export default {
                     ...(this.content.dataType === 'advanced' ? advancedOptions : guidedOptions),
                     onClick: e => {
                         const position = getRelativePosition(e, this.chartInstance);
+                        const points = this.chartInstance.getElementsAtEventForMode(
+                            e,
+                            'nearest',
+                            { intersect: true },
+                            true
+                        );
 
                         // Substitute the appropriate scale IDs
                         const dataX = this.chartInstance.scales.x.getValueForPixel(position.x);
                         const dataY = this.chartInstance.scales.y.getValueForPixel(position.y);
                         this.$emit('trigger-event', {
                             name: 'chart:click',
-                            event: { dataX, dataY, position },
+                            event: {
+                                dataX,
+                                dataY,
+                                position,
+                                points: points.map(point => ({
+                                    label: this.chartInstance.data.labels[point.index],
+                                    value: this.chartInstance.data.datasets[point.datasetIndex].data[point.index],
+                                    ...point,
+                                })),
+                            },
                         });
                     },
                 },
