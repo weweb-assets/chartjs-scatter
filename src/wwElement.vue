@@ -281,7 +281,7 @@ export default {
                                 dataY,
                                 position,
                                 points: points.map(point => ({
-                                    datasetLabel: this.chartInstance.data.datasets[point.datasetIndex].label
+                                    datasetLabel: this.chartInstance.data.datasets[point.datasetIndex].label,
                                     label: this.chartInstance.data.labels[point.index],
                                     value: typeof this.chartInstance.data.datasets[point.datasetIndex].data[point.index] === 'object' ?
                                         this.chartInstance.data.datasets[point.datasetIndex].data[point.index][this.content.axis === 'x' ? 'y' : 'x'] :
