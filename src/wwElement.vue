@@ -252,8 +252,8 @@ export default {
                 },
             };
 
-            const advancedOptions = typeof this.content.options === 'object' ? this.content.options : guidedOptions;
-
+            const finalOptions = this.content.dataType === 'advanced' && typeof this.content.options === 'object'? advancedOptions : guidedOptions
+            
             return {
                 type: 'scatter',
                 data: {
@@ -261,13 +261,12 @@ export default {
                     datasets,
                 },
                 options: {
-                    ...(this.content.dataType === 'advanced' ? advancedOptions : guidedOptions),
                     onClick: e => {
                         const position = getRelativePosition(e, this.chartInstance);
                         const points = this.chartInstance.getElementsAtEventForMode(
                             e,
-                            this.config.options.interaction || 'nearest',
-                            { intersect: true },
+                            finalOptions?.interaction?.mode || 'nearest',
+                            { intersect: finalOptions?.interaction?.intersect ?? true },
                             true
                         );
 
@@ -291,12 +290,22 @@ export default {
                             },
                         });
                     },
+                    ...finalOptions
                 },
             };
         },
     },
     watch: {
         'config.data.datasets': {
+            deep: true,
+            handler() {
+                this.chartInstance.data.datasets = this.config.data.datasets;
+                if (this.chartInstance) this.chartInstance.destroy();
+                this.initChart();
+                this.chartInstance.update();
+            },
+        },
+        'config.options': {
             deep: true,
             handler() {
                 this.chartInstance.data.datasets = this.config.data.datasets;
