@@ -252,7 +252,7 @@ export default {
                 },
             };
 
-            const finalOptions = this.content.dataType === 'advanced' && typeof this.content.options === 'object'? advancedOptions : guidedOptions
+            const finalOptions = this.content.dataType === 'advanced' && typeof this.content.options === 'object'? this.content.options : guidedOptions
             
             return {
                 type: 'scatter',
@@ -311,7 +311,6 @@ export default {
         'config.options': {
             deep: true,
             handler() {
-                this.chartInstance.data.datasets = this.config.data.datasets;
                 if (this.chartInstance) this.chartInstance.destroy();
                 this.initChart();
                 this.chartInstance.update();
