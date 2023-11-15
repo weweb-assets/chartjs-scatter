@@ -7,6 +7,7 @@
 <script>
 import { Chart, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import { getRelativePosition } from 'chart.js/helpers';
 import regression from 'regression';
 Chart.register(...registerables);
 Chart.register(annotationPlugin);
@@ -251,15 +252,49 @@ export default {
                 },
             };
 
-            const advancedOptions = typeof this.content.options === 'object' ? this.content.options : guidedOptions;
-
+            const finalOptions = this.content.dataType === 'advanced' && typeof this.content.options === 'object'? this.content.options : guidedOptions
+            
             return {
                 type: 'scatter',
                 data: {
                     labels,
                     datasets,
                 },
-                options: this.content.dataType === 'advanced' ? advancedOptions : guidedOptions,
+                options: {
+                    onClick: e => {
+                        const position = getRelativePosition(e, this.chartInstance);
+                        const points = this.chartInstance.getElementsAtEventForMode(
+                            e,
+                            finalOptions?.interaction?.mode || 'nearest',
+                            { intersect: finalOptions?.interaction?.intersect ?? true },
+                            true
+                        );
+
+                        // Substitute the appropriate scale IDs
+                        const dataX = this.chartInstance.scales.x.getValueForPixel(position.x);
+                        const dataY = this.chartInstance.scales.y.getValueForPixel(position.y);
+                        this.$emit('trigger-event', {
+                            name: 'chart:click',
+                            event: {
+                                dataX,
+                                dataY,
+                                position,
+                                points: points.map(point => ({
+                                    datasetLabel: this.chartInstance.data.datasets[point.datasetIndex].label,
+                                    label: this.chartInstance.data.labels[point.index],
+                                    value:
+                                        typeof this.chartInstance.data.datasets[point.datasetIndex].data[
+                                            point.index
+                                        ] === 'object'
+                                            ? this.chartInstance.data.datasets[point.datasetIndex].data[point.index]['y']
+                                            : this.chartInstance.data.datasets[point.datasetIndex].data[point.index],
+                                    ...point,
+                                })),
+                            },
+                        });
+                    },
+                    ...finalOptions
+                },
             };
         },
     },
@@ -268,6 +303,14 @@ export default {
             deep: true,
             handler() {
                 this.chartInstance.data.datasets = this.config.data.datasets;
+                if (this.chartInstance) this.chartInstance.destroy();
+                this.initChart();
+                this.chartInstance.update();
+            },
+        },
+        'config.options': {
+            deep: true,
+            handler() {
                 if (this.chartInstance) this.chartInstance.destroy();
                 this.initChart();
                 this.chartInstance.update();
