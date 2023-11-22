@@ -17,7 +17,7 @@ export default {
         icon: 'logos/chartjs',
         customStylePropertiesOrder: [
             ['isLegend', 'legendPosition', 'legendAlignement', 'legendSize', 'legendColor'],
-            ['axis', 'stacked', 'startAtZero', 'showLinearRegression', 'gridColor'],
+            ['axis', 'stacked', 'startAtZero', 'showLinearRegression', 'axisColor', 'gridColor'],
         ],
         customSettingsPropertiesOrder: [
             'dataType',
@@ -126,6 +126,16 @@ export default {
             states: true,
             classes: true,
             hidden: content => content.dataType === 'advanced' || !content.isLegend,
+        },
+        axisColor: {
+            label: 'Color',
+            type: 'Color',
+            options: { nullable: true },
+            bindable: true,
+            responsive: true,
+            states: true,
+            classes: true,
+            hidden: content => content.dataType === 'advanced',
         },
         gridColor: {
             label: 'Grid color',

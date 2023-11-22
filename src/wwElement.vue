@@ -225,7 +225,7 @@ export default {
                         align: this.content.legendAlignement,
                         labels: {
                             usePointStyle: true,
-                            color: this.content.legendColor,
+                            color: wwLib.getStyleFromToken(this.content.legendColor) || this.content.legendColor,
                             font: { size: parseInt(this.content.legendSize) },
                         },
                     },
@@ -236,7 +236,7 @@ export default {
                         position: 'bottom',
                         grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
                         ticks: {
-                            color: this.content.legendColor,
+                            color: wwLib.getStyleFromToken(this.content.axisColor) || this.content.axisColor,
                             font: { size: parseInt(this.content.legendSize) },
                         },
                         beginAtZero: this.content.startAtZero,
@@ -244,7 +244,7 @@ export default {
                     y: {
                         grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
                         ticks: {
-                            color: this.content.legendColor,
+                            color: wwLib.getStyleFromToken(this.content.axisColor) || this.content.axisColor,
                             font: { size: parseInt(this.content.legendSize) },
                         },
                         beginAtZero: this.content.startAtZero,
@@ -333,9 +333,12 @@ export default {
             this.chartInstance.update();
         },
         'content.legendColor'() {
-            this.chartInstance.options.plugins.legend.labels.color = this.content.legendColor;
-            this.chartInstance.options.scales.x.ticks.color = this.content.legendColor;
-            this.chartInstance.options.scales.y.ticks.color = this.content.legendColor;
+            this.chartInstance.options.plugins.legend.labels.color = wwLib.getStyleFromToken(this.content.legendColor) || this.content.legendColor;
+            this.chartInstance.update();
+        },
+        'content.axisColor'() {
+            this.chartInstance.options.scales.x.ticks.color = wwLib.getStyleFromToken(this.content.axisColor) || this.content.axisColor;
+            this.chartInstance.options.scales.y.ticks.color = wwLib.getStyleFromToken(this.content.axisColor) || this.content.axisColor;
             this.chartInstance.update();
         },
         'content.legendSize'() {
