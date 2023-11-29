@@ -225,7 +225,7 @@ export default {
                         align: this.content.legendAlignement,
                         labels: {
                             usePointStyle: true,
-                            color: this.content.legendColor,
+                            color: wwLib.getStyleFromToken(this.content.legendColor) || this.content.legendColor,
                             font: { size: parseInt(this.content.legendSize) },
                         },
                     },
@@ -234,17 +234,17 @@ export default {
                     x: {
                         type: 'linear',
                         position: 'bottom',
-                        grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
+                        grid: { color: wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor, borderColor: wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor },
                         ticks: {
-                            color: this.content.legendColor,
+                            color: wwLib.getStyleFromToken(this.content.labelColor) || this.content.labelColor,
                             font: { size: parseInt(this.content.legendSize) },
                         },
                         beginAtZero: this.content.startAtZero,
                     },
                     y: {
-                        grid: { color: this.content.gridColor, borderColor: this.content.gridColor },
+                        grid: { color: wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor, borderColor: wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor },
                         ticks: {
-                            color: this.content.legendColor,
+                            color: wwLib.getStyleFromToken(this.content.labelColor) || this.content.labelColor,
                             font: { size: parseInt(this.content.legendSize) },
                         },
                         beginAtZero: this.content.startAtZero,
@@ -333,9 +333,12 @@ export default {
             this.chartInstance.update();
         },
         'content.legendColor'() {
-            this.chartInstance.options.plugins.legend.labels.color = this.content.legendColor;
-            this.chartInstance.options.scales.x.ticks.color = this.content.legendColor;
-            this.chartInstance.options.scales.y.ticks.color = this.content.legendColor;
+            this.chartInstance.options.plugins.legend.labels.color = wwLib.getStyleFromToken(this.content.legendColor) || this.content.legendColor;
+            this.chartInstance.update();
+        },
+        'content.labelColor'() {
+            this.chartInstance.options.scales.x.ticks.color = wwLib.getStyleFromToken(this.content.labelColor) || this.content.labelColor;
+            this.chartInstance.options.scales.y.ticks.color = wwLib.getStyleFromToken(this.content.labelColor) || this.content.labelColor;
             this.chartInstance.update();
         },
         'content.legendSize'() {
@@ -343,10 +346,10 @@ export default {
             this.chartInstance.update();
         },
         'content.gridColor'() {
-            this.chartInstance.options.scales.x.grid.borderColor = this.content.gridColor;
-            this.chartInstance.options.scales.x.grid.color = this.content.gridColor;
-            this.chartInstance.options.scales.y.grid.borderColor = this.content.gridColor;
-            this.chartInstance.options.scales.y.grid.color = this.content.gridColor;
+            this.chartInstance.options.scales.x.grid.borderColor = wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor;
+            this.chartInstance.options.scales.x.grid.color = wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor;
+            this.chartInstance.options.scales.y.grid.borderColor = wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor;
+            this.chartInstance.options.scales.y.grid.color = wwLib.getStyleFromToken(this.content.gridColor) || this.content.gridColor;
             this.chartInstance.update();
         },
         'content.startAtZero'() {
