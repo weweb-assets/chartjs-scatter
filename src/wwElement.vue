@@ -38,7 +38,7 @@ export default {
                 let groupBy = this.content.groupBy;
                 let groupByProperty = this.content.groupByProperty;
                 let aggregate = yAxis === 'item-count' ? 'item-count' : this.content.aggregate;
-                const colors = this.content.colors;
+                const colors = this.content.colors.map(color => wwLib.getStyleFromToken(color) || color);
 
                 if (typeof data[0] !== 'object') {
                     data = data.map(value => ({ value }));
