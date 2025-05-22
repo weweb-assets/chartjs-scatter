@@ -417,12 +417,26 @@ export default {
         this.initChart();
     },
     beforeUnmount() {
-        this.chartInstance.destroy();
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+            this.chartInstance = null;
+        }
     },
     methods: {
         initChart() {
-            const element = this.$refs.chartjsScatter;
-            this.chartInstance = new Chart(element, this.config);
+            try {
+                if (this.chartInstance) {
+                    this.chartInstance.destroy();
+                }
+                const element = this.$refs.chartjsScatter;
+                if (!element) {
+                    console.error('Canvas element not found');
+                    return;
+                }
+                this.chartInstance = new Chart(element, this.config);
+            } catch (error) {
+                console.error('Failed to initialize chart:', error);
+            }
         },
         aggregate(operator, data) {
             if (!data) return undefined;
